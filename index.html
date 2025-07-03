@@ -1,0 +1,2215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Watermarking System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0f172a;
+            --accent: #4f46e5;
+            --success: #059669;
+            --error: #dc2626;
+            --warning: #d97706;
+            --info: #0891b2;
+            --surface: #ffffff;
+            --background: #f1f5f9;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background);
+            color: var(--secondary);
+            min-height: 100vh;
+        }
+        
+        .application-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            background: var(--surface);
+            box-shadow: var(--card-shadow);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(120deg, var(--accent), var(--primary-dark));
+            padding: 2.5rem 2rem;
+            position: relative;
+            color: white;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--accent), var(--primary), var(--primary-dark));
+        }
+        
+        .tab-nav {
+            display: flex;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 1.2rem 1rem;
+            text-align: center;
+            background: transparent;
+            border: none;
+            font-weight: 600;
+            color: var(--secondary);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            font-size: 1rem;
+        }
+        
+        .tab-button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: var(--primary);
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
+        }
+        
+        .tab-button.active {
+            color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+        
+        .tab-button.active::after {
+            width: 80%;
+        }
+        
+        .tab-button:hover::after {
+            width: 40%;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 2rem;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            background: var(--surface);
+            border-radius: 0.75rem;
+            padding: 1.75rem;
+            margin-bottom: 1.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease, transform 0.2s ease;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .card-icon {
+            background: rgba(79, 70, 229, 0.1);
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: var(--accent);
+            font-size: 1.25rem;
+        }
+        
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--secondary);
+            flex: 1;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+        
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: 0.875rem 1rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--secondary);
+            background-color: #ffffff;
+            background-clip: padding-box;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            transition: all 0.15s ease-in-out;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: 0;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .file-drop-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 1rem;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            background-color: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-drop-area:hover, .file-drop-area.dragover {
+            border-color: var(--primary);
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+        
+        .file-drop-area input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+        
+        .file-info {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            line-height: 1.5;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            cursor: pointer;
+            user-select: none;
+            border: 1px solid transparent;
+            border-radius: 0.5rem;
+            transition: all 0.15s ease-in-out;
+        }
+        
+        .btn-primary {
+            color: #ffffff;
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1), 0 2px 4px -1px rgba(37, 99, 235, 0.06);
+        }
+        
+        .btn-success {
+            color: #ffffff;
+            background-color: var(--success);
+            border-color: var(--success);
+        }
+        
+        .btn-success:hover {
+            background-color: #047857;
+            border-color: #047857;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.1), 0 2px 4px -1px rgba(5, 150, 105, 0.06);
+        }
+        
+        .btn-secondary {
+            color: var(--secondary);
+            background-color: #e2e8f0;
+            border-color: #e2e8f0;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #cbd5e1;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+        
+        .btn-icon {
+            margin-right: 0.5rem;
+        }
+        
+        .btn:disabled {
+            opacity: 0.65;
+            pointer-events: none;
+        }
+        
+        .progress-container {
+            display: none;
+            margin: 1.5rem 0;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+        
+        .result-container {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: #f8fafc;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: 0.5rem;
+        }
+        
+        .alert-success {
+            color: var(--success);
+            background-color: #dcfce7;
+            border-color: #bbf7d0;
+        }
+        
+        .alert-danger {
+            color: var(--error);
+            background-color: #fee2e2;
+            border-color: #fecaca;
+        }
+        
+        .alert-info {
+            color: var(--info);
+            background-color: #cffafe;
+            border-color: #a5f3fc;
+        }
+        
+        .alert-warning {
+            color: var(--warning);
+            background-color: #fef3c7;
+            border-color: #fde68a;
+        }
+        
+        .id-display {
+            background: linear-gradient(to right, rgba(79, 70, 229, 0.05), rgba(37, 99, 235, 0.05));
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            position: relative;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .id-code {
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-weight: 600;
+            color: var(--primary);
+            background: #ffffff;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            display: inline-block;
+            min-width: 220px;
+            text-align: center;
+            letter-spacing: 1px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .file-preview {
+            margin-top: 1rem;
+            padding: 1.25rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            background: #ffffff;
+        }
+        
+        .file-preview img,
+        .file-preview video {
+            max-width: 100%;
+            max-height: 320px;
+            border-radius: 0.5rem;
+            margin: 0 auto;
+            display: block;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .file-preview audio {
+            width: 100%;
+        }
+        
+        .file-preview .text-content {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.875rem;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .config-section {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        
+        .config-section.show {
+            max-height: 1000px;
+        }
+        
+        .collapsible-trigger {
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .collapsible-trigger:hover {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        
+        .param-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.25rem;
+        }
+        
+        .param-toggle {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            padding: 0.5rem 0;
+        }
+        
+        .param-toggle:hover {
+            color: var(--accent);
+        }
+        
+        .param-toggle i {
+            margin-left: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .param-toggle.expanded i {
+            transform: rotate(180deg);
+        }
+        
+        .advanced-params {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.5s ease;
+            opacity: 0;
+        }
+        
+        .advanced-params.show {
+            max-height: 1000px;
+            opacity: 1;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* Animation */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.4s ease forwards;
+        }
+        
+        .info-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            border-radius: 9999px;
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .about-section {
+            background: linear-gradient(120deg, rgba(79, 70, 229, 0.03), rgba(37, 99, 235, 0.03));
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .feature-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--secondary);
+        }
+        
+        .feature-desc {
+            font-size: 0.95rem;
+            color: #64748b;
+            flex-grow: 1;
+        }
+        
+        .language-switch {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+        
+        .language-btn {
+            background: none;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 0.5rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.2s ease;
+        }
+        
+        .language-btn.active {
+            opacity: 1;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .language-btn:hover {
+            opacity: 1;
+        }
+        
+        .language-separator {
+            width: 1px;
+            height: 20px;
+            background-color: #e2e8f0;
+            margin: 0 0.5rem;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            background-color: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        
+        @media (max-width: 768px) {
+            .param-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .tab-button {
+                padding: 0.875rem 0.5rem;
+                font-size: 0.875rem;
+            }
+            
+            .card {
+                padding: 1.25rem;
+            }
+            
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-6">
+    <div class="application-container">
+        <div class="header">
+            <h1 class="text-3xl md:text-4xl font-bold mb-3">Digital Watermarking System</h1>
+            <p class="text-base md:text-lg opacity-90">Secure protection and traceability for multimedia content</p>
+            <p class="text-sm md:text-base opacity-75 mt-1">Système de protection et traçabilité pour contenus multimédias</p>
+        </div>
+        
+        <div class="language-switch p-4">
+            <button class="language-btn active" onclick="changeLanguage('en')">English</button>
+            <span class="language-separator"></span>
+            <button class="language-btn" onclick="changeLanguage('fr')">Français</button>
+        </div>
+        
+        <!-- Configuration Storj (hidden by default) -->
+        <div class="px-4 pt-2 hidden" id="config-container">
+            <div class="collapsible-trigger" id="config-trigger">
+                <span class="font-semibold flex items-center">
+                    <i class="fa-solid fa-gear mr-2"></i> <span class="lang-en">System Configuration</span><span class="lang-fr hidden">Configuration du système</span>
+                </span>
+                <i class="fa-solid fa-chevron-down text-sm"></i>
+            </div>
+            <div class="config-section" id="config-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fa-solid fa-database"></i>
+                        </div>
+                        <h3 class="card-title"><span class="lang-en">Storage Parameters</span><span class="lang-fr hidden">Paramètres de stockage</span></h3>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="accessKey" class="form-label"><span class="lang-en">Access Key</span><span class="lang-fr hidden">Clé d'accès</span></label>
+                            <input type="password" id="accessKey" class="form-control" placeholder="Enter your access key">
+                        </div>
+                        <div class="form-group">
+                            <label for="secretKey" class="form-label"><span class="lang-en">Secret Key</span><span class="lang-fr hidden">Clé secrète</span></label>
+                            <input type="password" id="secretKey" class="form-control" placeholder="Enter your secret key">
+                        </div>
+                        <div class="form-group">
+                            <label for="endpoint" class="form-label">Endpoint</label>
+                            <input type="text" id="endpoint" class="form-control" value="https://gateway.storjshare.io">
+                        </div>
+                        <div class="form-group">
+                            <label for="bucketName" class="form-label">Bucket</label>
+                            <input type="text" id="bucketName" class="form-control" placeholder="Bucket name">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveConfig()">
+                        <i class="fa-solid fa-floppy-disk btn-icon"></i><span class="lang-en">Save Configuration</span><span class="lang-fr hidden">Sauvegarder</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-button active" onclick="switchTab('embed')">
+                <i class="fa-solid fa-shield-halved mr-2"></i><span class="lang-en">Protection</span><span class="lang-fr hidden">Protection</span>
+            </button>
+            <button class="tab-button" onclick="switchTab('extract')">
+                <i class="fa-solid fa-magnifying-glass-chart mr-2"></i><span class="lang-en">Extraction</span><span class="lang-fr hidden">Extraction</span>
+            </button>
+            <button class="tab-button" onclick="switchTab('about')">
+                <i class="fa-solid fa-circle-info mr-2"></i><span class="lang-en">About</span><span class="lang-fr hidden">À propos</span>
+            </button>
+        </div>
+
+        <!-- Embed Tab -->
+        <div id="embed-tab" class="tab-content active">
+            <div class="grid grid-cols-2 gap-6">
+                <!-- Audio File -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fa-solid fa-music"></i>
+                        </div>
+                        <h3 class="card-title"><span class="lang-en">Audio Carrier File</span><span class="lang-fr hidden">Fichier audio support</span></h3>
+                    </div>
+                    <div class="form-group">
+                        <label for="audio-file" class="form-label">
+                            <span class="lang-en">Select the audio file to watermark</span>
+                            <span class="lang-fr hidden">Sélectionnez le fichier audio à watermarker</span>
+                        </label>
+                        <div class="file-drop-area" id="audio-drop-area">
+                            <input type="file" id="audio-file" accept=".wav,.flac,.aiff,.mp3,.ogg,.aac,.m4a,.opus,.wma">
+                            <i class="fa-solid fa-music text-3xl text-gray-400 mb-3"></i>
+                            <p class="text-sm text-gray-600">
+                                <span class="lang-en">Drag & drop or click to select</span>
+                                <span class="lang-fr hidden">Glissez-déposez ou cliquez pour sélectionner</span>
+                            </p>
+                            <p class="text-xs text-gray-500 mt-2">
+                                <span class="lang-en">Formats: WAV, MP3, FLAC, AAC...</span>
+                                <span class="lang-fr hidden">Formats: WAV, MP3, FLAC, AAC...</span>
+                            </p>
+                            <div class="file-info" id="audio-file-info"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content to Protect -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fa-solid fa-file-shield"></i>
+                        </div>
+                        <h3 class="card-title">
+                            <span class="lang-en">Content to Protect</span>
+                            <span class="lang-fr hidden">Contenu à protéger</span>
+                        </h3>
+                    </div>
+                    <div class="form-group">
+                        <label for="content-type" class="form-label">
+                            <span class="lang-en">Content Type</span>
+                            <span class="lang-fr hidden">Type de contenu</span>
+                        </label>
+                        <select id="content-type" class="form-control" onchange="toggleContentInput()">
+                            <option value="text">
+                                <span class="lang-en">Text</span>
+                                <span class="lang-fr hidden">Texte</span>
+                            </option>
+                            <option value="image">
+                                <span class="lang-en">Image</span>
+                                <span class="lang-fr hidden">Image</span>
+                            </option>
+                            <option value="audio">
+                                <span class="lang-en">Audio</span>
+                                <span class="lang-fr hidden">Audio</span>
+                            </option>
+                            <option value="video">
+                                <span class="lang-en">Video</span>
+                                <span class="lang-fr hidden">Vidéo</span>
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Text input -->
+                    <div id="text-input" class="form-group">
+                        <label for="text-content" class="form-label">
+                            <span class="lang-en">Text to encode</span>
+                            <span class="lang-fr hidden">Texte à encoder</span>
+                        </label>
+                        <textarea id="text-content" rows="5" class="form-control" placeholder="Type your text here..."></textarea>
+                    </div>
+
+                    <!-- File input -->
+                    <div id="file-input" class="form-group hidden">
+                        <label for="media-file" class="form-label">
+                            <span class="lang-en">Media File</span>
+                            <span class="lang-fr hidden">Fichier multimédia</span>
+                        </label>
+                        <div class="file-drop-area" id="media-drop-area">
+                            <input type="file" id="media-file">
+                            <i class="fa-solid fa-file-import text-3xl text-gray-400 mb-3"></i>
+                            <p class="text-sm text-gray-600">
+                                <span class="lang-en">Drag & drop or click to select</span>
+                                <span class="lang-fr hidden">Glissez-déposez ou cliquez pour sélectionner</span>
+                            </p>
+                            <p class="text-xs text-gray-500 mt-2" id="file-type-hint">Images: JPG, PNG, GIF, WEBP</p>
+                            <div class="file-info" id="media-file-info"></div>
+                        </div>
+                    </div>
+
+                    <!-- Preview -->
+                    <div id="content-preview" class="file-preview hidden"></div>
+                </div>
+            </div>
+
+            <!-- Advanced Parameters -->
+            <div class="card mt-6">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <h3 class="card-title">
+                        <span class="lang-en">Watermarking Parameters</span>
+                        <span class="lang-fr hidden">Paramètres de watermarking</span>
+                    </h3>
+                </div>
+                <div class="form-group">
+                    <label for="embed-method" class="form-label">
+                        <span class="lang-en">Encoding Method</span>
+                        <span class="lang-fr hidden">Méthode d'encodage</span>
+                    </label>
+                    <select id="embed-method" class="form-control">
+                        <option value="DCT">
+                            <span class="lang-en">Discrete Cosine Transform (DCT)</span>
+                            <span class="lang-fr hidden">Transformée en cosinus discrète (DCT)</span>
+                        </option>
+                        <option value="DWT+DCT" selected>
+                            <span class="lang-en">Wavelet Transform + DCT</span>
+                            <span class="lang-fr hidden">Transformée en ondelettes + DCT</span>
+                        </option>
+                    </select>
+                </div>
+                <button type="button" class="param-toggle" id="embed-advanced-toggle">
+                    <span class="lang-en">Advanced parameters</span>
+                    <span class="lang-fr hidden">Paramètres avancés</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+                <div id="embed-advanced" class="advanced-params mt-4">
+                    <div class="param-grid">
+                        <div class="form-group">
+                            <label for="embed-segment-length" class="form-label">
+                                <span class="lang-en">Segment Length</span>
+                                <span class="lang-fr hidden">Longueur segment</span>
+                            </label>
+                            <select id="embed-segment-length" class="form-control">
+                                <option value="512">512</option>
+                                <option value="1024">1024</option>
+                                <option value="2048" selected>2048</option>
+                                <option value="4096">4096</option>
+                                <option value="8192">8192</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="embed-seed" class="form-label">
+                                <span class="lang-en">Random Seed</span>
+                                <span class="lang-fr hidden">Graine aléatoire</span>
+                            </label>
+                            <input type="number" id="embed-seed" class="form-control" value="42">
+                        </div>
+                        <div class="form-group">
+                            <label for="embed-modulation" class="form-label">
+                                <span class="lang-en">Modulation Strength</span>
+                                <span class="lang-fr hidden">Force de modulation</span>
+                            </label>
+                            <input type="number" id="embed-modulation" class="form-control" value="0.01" step="0.001" min="0.001" max="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label for="embed-band-lower" class="form-label">
+                                <span class="lang-en">Lower Band (%)</span>
+                                <span class="lang-fr hidden">Bande inférieure (%)</span>
+                            </label>
+                            <input type="number" id="embed-band-lower" class="form-control" value="33" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="embed-band-upper" class="form-label">
+                                <span class="lang-en">Upper Band (%)</span>
+                                <span class="lang-fr hidden">Bande supérieure (%)</span>
+                            </label>
+                            <input type="number" id="embed-band-upper" class="form-control" value="66" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="embed-n-coeffs" class="form-label">
+                                <span class="lang-en">Coefficient Count</span>
+                                <span class="lang-fr hidden">Nb coefficients</span>
+                            </label>
+                            <input type="number" id="embed-n-coeffs" class="form-control" value="5" min="1" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="embed-dwt-level" class="form-label">
+                                <span class="lang-en">DWT Level</span>
+                                <span class="lang-fr hidden">Niveau DWT</span>
+                            </label>
+                            <input type="number" id="embed-dwt-level" class="form-control" value="1" min="1" max="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="embed-dwt-wavelet" class="form-label">
+                                <span class="lang-en">Wavelet Type</span>
+                                <span class="lang-fr hidden">Type d'ondelette</span>
+                            </label>
+                            <select id="embed-dwt-wavelet" class="form-control">
+                                <option value="haar" selected>haar</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="embed-dwt-coeff" class="form-label">
+                                <span class="lang-en">DWT Coefficients</span>
+                                <span class="lang-fr hidden">Coefficients DWT</span>
+                            </label>
+                            <select id="embed-dwt-coeff" class="form-control">
+                                <option value="cA" selected>cA</option>
+                                <option value="cD">cD</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button class="btn btn-primary" onclick="processEmbedding()" id="embed-btn">
+                        <i class="fa-solid fa-shield-halved btn-icon"></i>
+                        <span class="lang-en">Protect Content</span>
+                        <span class="lang-fr hidden">Protéger le contenu</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="progress-container" id="embed-progress">
+                <p class="text-sm mb-2" id="embed-progress-text">
+                    <span class="lang-en">Processing...</span>
+                    <span class="lang-fr hidden">Traitement en cours...</span>
+                </p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="embed-progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="result-container slide-in" id="embed-result">
+                <div class="id-display">
+                    <h4 class="text-sm font-semibold mb-2 text-gray-600">
+                        <span class="lang-en">Generated Unique Identifier</span>
+                        <span class="lang-fr hidden">Identifiant unique généré</span>
+                    </h4>
+                    <div class="id-code" id="generated-id"></div>
+                </div>
+                <div class="mt-4">
+                    <button class="btn btn-success" onclick="downloadWatermarkedAudio()">
+                        <i class="fa-solid fa-download btn-icon"></i>
+                        <span class="lang-en">Download Protected Audio</span>
+                        <span class="lang-fr hidden">Télécharger l'audio protégé</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="embed-status" class="mt-4"></div>
+        </div>
+
+        <!-- Extract Tab -->
+        <div id="extract-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    </div>
+                    <h3 class="card-title">
+                        <span class="lang-en">Watermark Extraction</span>
+                        <span class="lang-fr hidden">Extraction de watermark</span>
+                    </h3>
+                </div>
+                <div class="form-group">
+                    <label for="extract-audio-file" class="form-label">
+                        <span class="lang-en">Watermarked Audio File</span>
+                        <span class="lang-fr hidden">Fichier audio watermarqué</span>
+                    </label>
+                    <div class="file-drop-area" id="extract-audio-drop-area">
+                        <input type="file" id="extract-audio-file" accept=".wav,.flac,.aiff,.mp3,.ogg,.aac,.m4a,.opus,.wma">
+                        <i class="fa-solid fa-file-audio text-3xl text-gray-400 mb-3"></i>
+                        <p class="text-sm text-gray-600">
+                            <span class="lang-en">Drag & drop or click to select</span>
+                            <span class="lang-fr hidden">Glissez-déposez ou cliquez pour sélectionner</span>
+                        </p>
+                        <p class="text-xs text-gray-500 mt-2">
+                            <span class="lang-en">Formats: WAV, MP3, FLAC, AAC...</span>
+                            <span class="lang-fr hidden">Formats: WAV, MP3, FLAC, AAC...</span>
+                        </p>
+                        <div class="file-info" id="extract-file-info"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="extract-method" class="form-label">
+                        <span class="lang-en">Decoding Method</span>
+                        <span class="lang-fr hidden">Méthode de décodage</span>
+                    </label>
+                    <select id="extract-method" class="form-control">
+                        <option value="DCT">
+                            <span class="lang-en">Discrete Cosine Transform (DCT)</span>
+                            <span class="lang-fr hidden">Transformée en cosinus discrète (DCT)</span>
+                        </option>
+                        <option value="DWT+DCT" selected>
+                            <span class="lang-en">Wavelet Transform + DCT</span>
+                            <span class="lang-fr hidden">Transformée en ondelettes + DCT</span>
+                        </option>
+                    </select>
+                </div>
+                <button type="button" class="param-toggle" id="extract-advanced-toggle">
+                    <span class="lang-en">Advanced parameters</span>
+                    <span class="lang-fr hidden">Paramètres avancés</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+                <div id="extract-advanced" class="advanced-params mt-4">
+                    <div class="param-grid">
+                        <div class="form-group">
+                            <label for="extract-segment-length" class="form-label">
+                                <span class="lang-en">Segment Length</span>
+                                <span class="lang-fr hidden">Longueur segment</span>
+                            </label>
+                            <select id="extract-segment-length" class="form-control">
+                                <option value="512">512</option>
+                                <option value="1024">1024</option>
+                                <option value="2048" selected>2048</option>
+                                <option value="4096">4096</option>
+                                <option value="8192">8192</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="extract-seed" class="form-label">
+                                <span class="lang-en">Random Seed</span>
+                                <span class="lang-fr hidden">Graine aléatoire</span>
+                            </label>
+                            <input type="number" id="extract-seed" class="form-control" value="42">
+                        </div>
+                        <div class="form-group">
+                            <label for="extract-modulation" class="form-label">
+                                <span class="lang-en">Modulation Strength</span>
+                                <span class="lang-fr hidden">Force de modulation</span>
+                            </label>
+                            <input type="number" id="extract-modulation" class="form-control" value="0.01" step="0.001" min="0.001" max="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label for="extract-band-lower" class="form-label">
+                                <span class="lang-en">Lower Band (%)</span>
+                                <span class="lang-fr hidden">Bande inférieure (%)</span>
+                            </label>
+                            <input type="number" id="extract-band-lower" class="form-control" value="33" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="extract-band-upper" class="form-label">
+                                <span class="lang-en">Upper Band (%)</span>
+                                <span class="lang-fr hidden">Bande supérieure (%)</span>
+                            </label>
+                            <input type="number" id="extract-band-upper" class="form-control" value="66" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="extract-n-coeffs" class="form-label">
+                                <span class="lang-en">Coefficient Count</span>
+                                <span class="lang-fr hidden">Nb coefficients</span>
+                            </label>
+                            <input type="number" id="extract-n-coeffs" class="form-control" value="5" min="1" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="extract-dwt-level" class="form-label">
+                                <span class="lang-en">DWT Level</span>
+                                <span class="lang-fr hidden">Niveau DWT</span>
+                            </label>
+                            <input type="number" id="extract-dwt-level" class="form-control" value="1" min="1" max="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="extract-dwt-wavelet" class="form-label">
+                                <span class="lang-en">Wavelet Type</span>
+                                <span class="lang-fr hidden">Type d'ondelette</span>
+                            </label>
+                            <select id="extract-dwt-wavelet" class="form-control">
+                                <option value="haar" selected>haar</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="extract-dwt-coeff" class="form-label">
+                                <span class="lang-en">DWT Coefficients</span>
+                                <span class="lang-fr hidden">Coefficients DWT</span>
+                            </label>
+                            <select id="extract-dwt-coeff" class="form-control">
+                                <option value="cA" selected>cA</option>
+                                <option value="cD">cD</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button class="btn btn-primary" onclick="processExtraction()" id="extract-btn">
+                        <i class="fa-solid fa-magnifying-glass btn-icon"></i>
+                        <span class="lang-en">Extract & Retrieve</span>
+                        <span class="lang-fr hidden">Extraire et récupérer</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Extraction Results -->
+            <div class="progress-container" id="extract-progress">
+                <p class="text-sm mb-2" id="extract-progress-text">
+                    <span class="lang-en">Extraction in progress...</span>
+                    <span class="lang-fr hidden">Extraction en cours...</span>
+                </p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="extract-progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="result-container slide-in" id="extract-result">
+                <div class="id-display">
+                    <h4 class="text-sm font-semibold mb-2 text-gray-600">
+                        <span class="lang-en">Extracted Identifier</span>
+                        <span class="lang-fr hidden">Identifiant extrait</span>
+                    </h4>
+                    <div class="id-code" id="extracted-id"></div>
+                </div>
+                <div id="extracted-content" class="file-preview mt-4"></div>
+            </div>
+
+            <div id="extract-status" class="mt-4"></div>
+        </div>
+        
+        <!-- About Tab -->
+        <div id="about-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </div>
+                    <h3 class="card-title">
+                        <span class="lang-en">About the Digital Watermarking System</span>
+                        <span class="lang-fr hidden">À propos du système de watermarking</span>
+                    </h3>
+                </div>
+                <div class="mb-4">
+                    <div class="info-badge"><i class="fa-solid fa-code mr-1"></i> Version 2.1.0</div>
+                    <div class="info-badge"><i class="fa-solid fa-calendar mr-1"></i> July 2025</div>
+                </div>
+                <p class="mb-4">
+                    <span class="lang-en">
+                        Our Digital Watermarking System provides robust protection for multimedia content through advanced signal processing techniques. The system embeds imperceptible watermarks into audio files to create secure links to any digital content you wish to protect.
+                    </span>
+                    <span class="lang-fr hidden">
+                        Notre système de filigrane numérique offre une protection robuste pour les contenus multimédias grâce à des techniques avancées de traitement du signal. Le système intègre des filigranes imperceptibles dans les fichiers audio pour créer des liens sécurisés vers tout contenu numérique que vous souhaitez protéger.
+                    </span>
+                </p>
+                <p>
+                    <span class="lang-en">
+                        The watermarking process uses frequency domain transformations that are resistant to common signal processing operations such as compression, filtering, and format conversion, ensuring your content remains protected even after modification.
+                    </span>
+                    <span class="lang-fr hidden">
+                        Le processus de watermarking utilise des transformations dans le domaine fréquentiel qui résistent aux opérations courantes de traitement du signal comme la compression, le filtrage et la conversion de format, garantissant que votre contenu reste protégé même après modification.
+                    </span>
+                </p>
+            </div>
+            
+            <div class="about-section">
+                <h2 class="text-xl font-bold mb-2">
+                    <span class="lang-en">Signal Processing Technologies</span>
+                    <span class="lang-fr hidden">Technologies de traitement du signal</span>
+                </h2>
+                <p class="mb-6">
+                    <span class="lang-en">
+                        Our system leverages cutting-edge signal processing techniques to provide robust, imperceptible watermarking:
+                    </span>
+                    <span class="lang-fr hidden">
+                        Notre système exploite des techniques de pointe en traitement du signal pour fournir un watermarking robuste et imperceptible :
+                    </span>
+                </p>
+                
+                <div class="about-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-wave-square"></i>
+                        </div>
+                        <h3 class="feature-title">
+                            <span class="lang-en">Discrete Cosine Transform (DCT)</span>
+                            <span class="lang-fr hidden">Transformée en Cosinus Discrète</span>
+                        </h3>
+                        <p class="feature-desc">
+                            <span class="lang-en">
+                                DCT converts time-domain signals into frequency components, allowing watermark embedding in specific frequency bands that are less perceptible to human hearing while remaining robust against attacks.
+                            </span>
+                            <span class="lang-fr hidden">
+                                La DCT convertit les signaux temporels en composantes fréquentielles, permettant l'intégration de filigranes dans des bandes de fréquences spécifiques qui sont moins perceptibles pour l'oreille humaine tout en restant robustes contre les attaques.
+                            </span>
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-water"></i>
+                        </div>
+                        <h3 class="feature-title">
+                            <span class="lang-en">Discrete Wavelet Transform (DWT)</span>
+                            <span class="lang-fr hidden">Transformée en Ondelettes Discrète</span>
+                        </h3>
+                        <p class="feature-desc">
+                            <span class="lang-en">
+                                DWT decomposes signals into multiple resolution levels, allowing for precise localization in both time and frequency domains. This multi-resolution approach enhances watermark imperceptibility and robustness.
+                            </span>
+                            <span class="lang-fr hidden">
+                                La DWT décompose les signaux en plusieurs niveaux de résolution, permettant une localisation précise dans les domaines temporel et fréquentiel. Cette approche multi-résolution améliore l'imperceptibilité et la robustesse du filigrane.
+                            </span>
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <h3 class="feature-title">
+                            <span class="lang-en">Hybrid DWT-DCT Approach</span>
+                            <span class="lang-fr hidden">Approche hybride DWT-DCT</span>
+                        </h3>
+                        <p class="feature-desc">
+                            <span class="lang-en">
+                                By combining DWT and DCT, our system achieves superior performance by exploiting the multi-resolution capabilities of wavelets and the energy compaction properties of DCT, resulting in watermarks that are both imperceptible and resilient.
+                            </span>
+                            <span class="lang-fr hidden">
+                                En combinant DWT et DCT, notre système atteint des performances supérieures en exploitant les capacités multi-résolution des ondelettes et les propriétés de compression d'énergie de la DCT, résultant en des filigranes à la fois imperceptibles et résistants.
+                            </span>
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-random"></i>
+                        </div>
+                        <h3 class="feature-title">
+                            <span class="lang-en">Spread Spectrum Techniques</span>
+                            <span class="lang-fr hidden">Techniques d'étalement de spectre</span>
+                        </h3>
+                        <p class="feature-desc">
+                            <span class="lang-en">
+                                Our system uses spread spectrum methods to distribute watermark information across multiple frequency components, providing resistance against targeted attacks and ensuring successful extraction even if parts of the signal are damaged.
+                            </span>
+                            <span class="lang-fr hidden">
+                                Notre système utilise des méthodes d'étalement de spectre pour distribuer les informations du filigrane sur plusieurs composantes fréquentielles, offrant une résistance contre les attaques ciblées et assurant une extraction réussie même si des parties du signal sont endommagées.
+                            </span>
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-key"></i>
+                        </div>
+                        <h3 class="feature-title">
+                            <span class="lang-en">Cryptographic Integration</span>
+                            <span class="lang-fr hidden">Intégration cryptographique</span>
+                        </h3>
+                        <p class="feature-desc">
+                            <span class="lang-en">
+                                We incorporate cryptographic principles through random seeds and coefficient selection strategies, ensuring that only authorized parties with the correct parameters can extract or verify the embedded watermarks.
+                            </span>
+                            <span class="lang-fr hidden">
+                                Nous intégrons des principes cryptographiques via des graines aléatoires et des stratégies de sélection de coefficients, garantissant que seules les parties autorisées disposant des paramètres corrects peuvent extraire ou vérifier les filigranes intégrés.
+                            </span>
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-ear-listen"></i>
+                        </div>
+                        <h3 class="feature-title">
+                            <span class="lang-en">Psychoacoustic Modeling</span>
+                            <span class="lang-fr hidden">Modélisation psychoacoustique</span>
+                        </h3>
+                        <p class="feature-desc">
+                            <span class="lang-en">
+                                Our watermarking algorithm leverages principles of human auditory perception to identify optimal embedding locations, ensuring that modifications remain below the threshold of perception while maximizing watermark strength.
+                            </span>
+                            <span class="lang-fr hidden">
+                                Notre algorithme de watermarking exploite les principes de la perception auditive humaine pour identifier les emplacements d'intégration optimaux, garantissant que les modifications restent sous le seuil de perception tout en maximisant la force du filigrane.
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-6">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="card-title">
+                        <span class="lang-en">Applications & Use Cases</span>
+                        <span class="lang-fr hidden">Applications et cas d'utilisation</span>
+                    </h3>
+                </div>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li>
+                        <span class="lang-en"><strong>Copyright Protection:</strong> Embed ownership information to prove intellectual property rights</span>
+                        <span class="lang-fr hidden"><strong>Protection des droits d'auteur :</strong> Intégration d'informations de propriété pour prouver les droits de propriété intellectuelle</span>
+                    </li>
+                    <li>
+                        <span class="lang-en"><strong>Content Authentication:</strong> Verify content integrity and detect unauthorized modifications</span>
+                        <span class="lang-fr hidden"><strong>Authentification de contenu :</strong> Vérifier l'intégrité du contenu et détecter les modifications non autorisées</span>
+                    </li>
+                    <li>
+                        <span class="lang-en"><strong>Broadcast Monitoring:</strong> Track when and where content is distributed or broadcast</span>
+                        <span class="lang-fr hidden"><strong>Surveillance de diffusion :</strong> Suivre quand et où le contenu est distribué ou diffusé</span>
+                    </li>
+                    <li>
+                        <span class="lang-en"><strong>Forensic Tracking:</strong> Identify sources of leaked or unauthorized content distribution</span>
+                        <span class="lang-fr hidden"><strong>Traçage judiciaire :</strong> Identifier les sources de fuite ou de distribution non autorisée de contenu</span>
+                    </li>
+                    <li>
+                        <span class="lang-en"><strong>Enhanced Metadata:</strong> Link audio content to additional information or interactive experiences</span>
+                        <span class="lang-fr hidden"><strong>Métadonnées améliorées :</strong> Relier le contenu audio à des informations supplémentaires ou à des expériences interactives</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="footer mt-6">
+                <p>
+                    <span class="lang-en">© 2025 Digital Watermarking System - All rights reserved</span>
+                    <span class="lang-fr hidden">© 2025 Système de Watermarking Numérique - Tous droits réservés</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration globale
+        const SERVER_URL = 'https://audio-watermarker-production-8f79.up.railway.app';
+        
+        let storjConfig = {
+            accessKey: '',
+            secretKey: '',
+            endpoint: 'https://gateway.storjshare.io',
+            bucketName: ''
+        };
+        
+        let downloadData = null;
+        let downloadFilename = null;
+        
+        // Variables globales pour les fichiers
+        let selectedAudioFile = null;
+        let selectedMediaFile = null;
+        let textContent = '';
+        let currentLanguage = 'en';
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadConfig();
+            loadWavelets();
+            setupEventListeners();
+            initAnimations();
+        });
+        
+        function initAnimations() {
+            // Animation initiale pour le titre
+            const header = document.querySelector('.header');
+            header.classList.add('slide-in');
+        }
+        
+        function setupEventListeners() {
+            // Config section toggle
+            document.getElementById('config-trigger').addEventListener('click', toggleConfigSection);
+            
+            // Advanced params toggles
+            document.getElementById('embed-advanced-toggle').addEventListener('click', function() {
+                toggleAdvancedParams('embed');
+            });
+            
+            document.getElementById('extract-advanced-toggle').addEventListener('click', function() {
+                toggleAdvancedParams('extract');
+            });
+            
+            // Gestion des fichiers audio
+            setupFileDropArea('audio-drop-area', 'audio-file', 'audio-file-info', (file) => {
+                selectedAudioFile = file;
+            });
+            
+            setupFileDropArea('extract-audio-drop-area', 'extract-audio-file', 'extract-file-info');
+            
+            // Gestion des fichiers multimédia
+            setupFileDropArea('media-drop-area', 'media-file', 'media-file-info', (file) => {
+                selectedMediaFile = file;
+                if (file) {
+                    previewFile(file);
+                }
+            });
+            
+            // Gestion du texte
+            document.getElementById('text-content').addEventListener('input', function(e) {
+                textContent = e.target.value;
+                if (textContent) {
+                    previewText(textContent);
+                }
+            });
+        }
+        
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('onclick').includes(lang)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            document.querySelectorAll(`.lang-en, .lang-fr`).forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            document.querySelectorAll(`.lang-${lang}`).forEach(el => {
+                el.classList.remove('hidden');
+            });
+        }
+        
+        function setupFileDropArea(areaId, inputId, infoId, callback) {
+            const dropArea = document.getElementById(areaId);
+            const fileInput = document.getElementById(inputId);
+            const fileInfo = document.getElementById(infoId);
+            
+            // Click to select
+            dropArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            // File selection change
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    displayFileInfo(file, fileInfo);
+                    if (callback) callback(file);
+                }
+            });
+            
+            // Drag and drop
+            dropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropArea.classList.add('dragover');
+            });
+            
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.classList.remove('dragover');
+            });
+            
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.classList.remove('dragover');
+                if (e.dataTransfer.files.length > 0) {
+                    const file = e.dataTransfer.files[0];
+                    fileInput.files = e.dataTransfer.files;
+                    displayFileInfo(file, fileInfo);
+                    if (callback) callback(file);
+                }
+            });
+        }
+        
+        function displayFileInfo(file, infoElement) {
+            const size = formatFileSize(file.size);
+            
+            infoElement.innerHTML = `
+                <div class="mt-3 p-2 bg-white border border-gray-200 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-file text-primary mr-2"></i>
+                        <span class="font-medium text-sm">${file.name}</span>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">${size}</div>
+                </div>
+            `;
+        }
+        
+        function toggleConfigSection() {
+            const section = document.getElementById('config-section');
+            const trigger = document.getElementById('config-trigger');
+            const icon = trigger.querySelector('i.fa-chevron-down');
+            
+            section.classList.toggle('show');
+            icon.style.transform = section.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0)';
+        }
+        
+        function toggleAdvancedParams(type) {
+            const params = document.getElementById(`${type}-advanced`);
+            const toggle = document.getElementById(`${type}-advanced-toggle`);
+            const icon = toggle.querySelector('i');
+            
+            params.classList.toggle('show');
+            toggle.classList.toggle('expanded');
+        }
+        
+        // Gestion des onglets
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-button').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelector(`button[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+        
+        // Gestion du type de contenu
+        function toggleContentInput() {
+            const contentType = document.getElementById('content-type').value;
+            const textInput = document.getElementById('text-input');
+            const fileInput = document.getElementById('file-input');
+            const fileTypeHint = document.getElementById('file-type-hint');
+            const mediaFileInput = document.getElementById('media-file');
+            
+            if (contentType === 'text') {
+                textInput.classList.remove('hidden');
+                fileInput.classList.add('hidden');
+                selectedMediaFile = null;
+                mediaFileInput.value = '';
+            } else {
+                textInput.classList.add('hidden');
+                fileInput.classList.remove('hidden');
+                textContent = '';
+                document.getElementById('text-content').value = '';
+                
+                // Mise à jour des types de fichiers acceptés
+                switch (contentType) {
+                    case 'image':
+                        mediaFileInput.accept = '.jpg,.jpeg,.png,.gif,.bmp,.webp,.svg';
+                        fileTypeHint.textContent = currentLanguage === 'en' ? 'Images: JPG, PNG, GIF, WEBP, SVG' : 'Images: JPG, PNG, GIF, WEBP, SVG';
+                        break;
+                    case 'audio':
+                        mediaFileInput.accept = '.mp3,.wav,.flac,.aac,.ogg,.m4a';
+                        fileTypeHint.textContent = currentLanguage === 'en' ? 'Audio: MP3, WAV, FLAC, AAC, OGG' : 'Audio: MP3, WAV, FLAC, AAC, OGG';
+                        break;
+                    case 'video':
+                        mediaFileInput.accept = '.mp4,.avi,.mov,.mkv,.wmv,.webm';
+                        fileTypeHint.textContent = currentLanguage === 'en' ? 'Video: MP4, AVI, MOV, MKV, WEBM' : 'Vidéo: MP4, AVI, MOV, MKV, WEBM';
+                        break;
+                }
+            }
+            
+            document.getElementById('content-preview').classList.add('hidden');
+        }
+        
+        // Prévisualisation des fichiers
+        function previewFile(file) {
+            const preview = document.getElementById('content-preview');
+            const contentType = document.getElementById('content-type').value;
+            
+            preview.innerHTML = '';
+            preview.classList.remove('hidden');
+            
+            const fileInfo = document.createElement('div');
+            fileInfo.innerHTML = `<div class="mb-3"><i class="fa-solid fa-file mr-2"></i><strong>${file.name}</strong> (${formatFileSize(file.size)})</div>`;
+            preview.appendChild(fileInfo);
+            
+            if (contentType === 'image' && file.type.startsWith('image/')) {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.onload = () => URL.revokeObjectURL(img.src);
+                preview.appendChild(img);
+            } else if (contentType === 'video' && file.type.startsWith('video/')) {
+                const video = document.createElement('video');
+                video.src = URL.createObjectURL(file);
+                video.controls = true;
+                video.onload = () => URL.revokeObjectURL(video.src);
+                preview.appendChild(video);
+            } else if (contentType === 'audio' && file.type.startsWith('audio/')) {
+                const audio = document.createElement('audio');
+                audio.src = URL.createObjectURL(file);
+                audio.controls = true;
+                audio.onload = () => URL.revokeObjectURL(audio.src);
+                preview.appendChild(audio);
+            }
+        }
+        
+        function previewText(text) {
+            const preview = document.getElementById('content-preview');
+            preview.innerHTML = `
+                <div class="mb-3"><i class="fa-solid fa-file-lines mr-2"></i><strong>${currentLanguage === 'en' ? 'Text' : 'Texte'} (${text.length} ${currentLanguage === 'en' ? 'characters' : 'caractères'})</strong></div>
+                <div class="text-content">${text}</div>
+            `;
+            preview.classList.remove('hidden');
+        }
+        
+        // Génération d'ID intelligent
+        function generateSmartID(contentType) {
+            const typePrefix = {
+                'text': 'TX',
+                'image': 'IM',
+                'audio': 'AU',
+                'video': 'VI'
+            };
+            
+            const timestamp = Date.now().toString(36).slice(-4); // 4 chars
+            const random = Math.random().toString(36).slice(-4); // 4 chars
+            const prefix = typePrefix[contentType] || 'XX'; // 2 chars
+            const sequence = Math.floor(Math.random() * 100).toString().padStart(2, '0'); // 2 chars
+            
+            return `${prefix}${timestamp}${random}${sequence}`.toUpperCase();
+        }
+        
+        // Chargement des ondelettes
+        async function loadWavelets() {
+            try {
+                const response = await fetch(`${SERVER_URL}/api/wavelets`);
+                const data = await response.json();
+                
+                const selects = document.querySelectorAll('[id$="dwt-wavelet"]');
+                selects.forEach(select => {
+                    select.innerHTML = '';
+                    data.wavelets.forEach(wavelet => {
+                        const option = document.createElement('option');
+                        option.value = wavelet;
+                        option.textContent = wavelet;
+                        if (wavelet === 'haar') option.selected = true;
+                        select.appendChild(option);
+                    });
+                });
+            } catch (error) {
+                console.error(currentLanguage === 'en' ? 'Error loading wavelets:' : 'Erreur lors du chargement des ondelettes:', error);
+            }
+        }
+        
+        // Configuration Storj
+        function loadConfig() {
+            const saved = localStorage.getItem('storjConfig');
+            if (saved) {
+                storjConfig = JSON.parse(saved);
+                document.getElementById('accessKey').value = storjConfig.accessKey || '';
+                document.getElementById('secretKey').value = storjConfig.secretKey || '';
+                document.getElementById('endpoint').value = storjConfig.endpoint || 'https://gateway.storjshare.io';
+                document.getElementById('bucketName').value = storjConfig.bucketName || '';
+            }
+        }
+        
+        function saveConfig() {
+            storjConfig.accessKey = document.getElementById('accessKey').value;
+            storjConfig.secretKey = document.getElementById('secretKey').value;
+            storjConfig.endpoint = document.getElementById('endpoint').value;
+            storjConfig.bucketName = document.getElementById('bucketName').value;
+            
+            localStorage.setItem('storjConfig', JSON.stringify(storjConfig));
+            
+            showStatus(currentLanguage === 'en' ? 'Configuration saved successfully' : 'Configuration sauvegardée avec succès', 'success', 'embed-status');
+            
+            // Fermer la section config
+            setTimeout(() => {
+                toggleConfigSection();
+            }, 1000);
+        }
+        
+        function validateConfig() {
+            if (!storjConfig.accessKey || !storjConfig.secretKey || !storjConfig.bucketName) {
+                const msg = currentLanguage === 'en' ? 'Please configure storage parameters' : 'Veuillez configurer les paramètres de stockage';
+                showStatus(msg, 'danger', 'embed-status');
+                
+                // Show config container
+                document.getElementById('config-container').classList.remove('hidden');
+                toggleConfigSection(); // Ouvrir la section config
+                return false;
+            }
+            return true;
+        }
+        
+        // Processus d'embedding
+        async function processEmbedding() {
+            // Validation
+            if (!selectedAudioFile) {
+                const msg = currentLanguage === 'en' ? 'Please select an audio file' : 'Veuillez sélectionner un fichier audio';
+                showStatus(msg, 'danger', 'embed-status');
+                return;
+            }
+            
+            const contentType = document.getElementById('content-type').value;
+            let contentData = null;
+            
+            if (contentType === 'text') {
+                if (!textContent.trim()) {
+                    const msg = currentLanguage === 'en' ? 'Please enter text' : 'Veuillez entrer du texte';
+                    showStatus(msg, 'danger', 'embed-status');
+                    return;
+                }
+                contentData = textContent;
+            } else {
+                if (!selectedMediaFile) {
+                    const msg = currentLanguage === 'en' ? 'Please select a media file' : 'Veuillez sélectionner un fichier multimédia';
+                    showStatus(msg, 'danger', 'embed-status');
+                    return;
+                }
+                contentData = selectedMediaFile;
+            }
+            
+            if (!validateConfig()) return;
+            
+            const button = document.getElementById('embed-btn');
+            const progress = document.getElementById('embed-progress');
+            const result = document.getElementById('embed-result');
+            
+            button.disabled = true;
+            button.innerHTML = `<i class="fa-solid fa-spinner fa-spin btn-icon"></i>${currentLanguage === 'en' ? 'Processing...' : 'Traitement en cours...'}`;
+            
+            progress.style.display = 'block';
+            result.style.display = 'none';
+            
+            hideStatus('embed-status');
+            
+            try {
+                // Étape 1: Générer un ID unique
+                const uniqueID = generateSmartID(contentType);
+                document.getElementById('generated-id').textContent = uniqueID;
+                
+                const msg1 = currentLanguage === 'en' ? 'Generating unique identifier...' : 'Génération de l\'identifiant unique...';
+                showStatus(msg1, 'info', 'embed-status');
+                updateProgress('embed-progress-fill', 20);
+                document.getElementById('embed-progress-text').textContent = msg1;
+                
+                // Étape 2: Uploader le contenu sur Storj
+                const msg2 = currentLanguage === 'en' ? 'Transferring content to secure storage...' : 'Transfert du contenu vers le stockage sécurisé...';
+                showStatus(msg2, 'info', 'embed-status');
+                document.getElementById('embed-progress-text').textContent = msg2;
+                
+                await uploadContentToStorj(uniqueID, contentType, contentData);
+                updateProgress('embed-progress-fill', 50);
+                
+                // Étape 3: Insérer l'ID dans l'audio via watermarking
+                const msg3 = currentLanguage === 'en' ? 'Applying watermark to audio...' : 'Application du watermark dans l\'audio...';
+                showStatus(msg3, 'info', 'embed-status');
+                document.getElementById('embed-progress-text').textContent = msg3;
+                
+                await embedWatermarkInAudio(uniqueID, selectedAudioFile);
+                updateProgress('embed-progress-fill', 100);
+                
+                progress.style.display = 'none';
+                result.style.display = 'block';
+                
+                const successMsg = currentLanguage === 'en' ? 'Protection successfully applied' : 'Protection appliquée avec succès';
+                showStatus(successMsg, 'success', 'embed-status');
+            } catch (error) {
+                progress.style.display = 'none';
+                showStatus(`${currentLanguage === 'en' ? 'Error' : 'Erreur'}: ${error.message}`, 'danger', 'embed-status');
+            } finally {
+                button.disabled = false;
+                button.innerHTML = `<i class="fa-solid fa-shield-halved btn-icon"></i>${currentLanguage === 'en' ? 'Protect Content' : 'Protéger le contenu'}`;
+            }
+        }
+        
+        // Upload vers Storj
+        async function uploadContentToStorj(id, contentType, content) {
+            let filename, fileData;
+            
+            if (contentType === 'text') {
+                filename = `${id}.txt`;
+                fileData = new Blob([content], { type: 'text/plain' });
+            } else {
+                const extension = content.name.split('.').pop();
+                filename = `${id}.${extension}`;
+                fileData = content;
+            }
+            
+            const url = `${storjConfig.endpoint}/${storjConfig.bucketName}/${encodeURIComponent(filename)}`;
+            const basicAuth = btoa(`${storjConfig.accessKey}:${storjConfig.secretKey}`);
+            
+            let response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Basic ${basicAuth}`,
+                    'Content-Type': fileData.type || 'application/octet-stream'
+                },
+                body: fileData
+            });
+            
+            if (!response.ok && response.status === 403) {
+                const urlObj = new URL(url);
+                const hostHeader = urlObj.hostname;
+                
+                const headers = {
+                    'Content-Type': fileData.type || 'application/octet-stream',
+                    'Host': hostHeader
+                };
+                
+                const signedHeaders = await createAWS4Signature('PUT', url, headers, fileData);
+                
+                response = await fetch(url, {
+                    method: 'PUT',
+                    headers: signedHeaders,
+                    body: fileData
+                });
+            }
+            
+            if (!response.ok) {
+                throw new Error(currentLanguage === 'en' ? `Upload failed: ${response.status} - ${response.statusText}` : `Échec de l'upload: ${response.status} - ${response.statusText}`);
+            }
+        }
+        
+        // Insertion du watermark dans l'audio
+        async function embedWatermarkInAudio(watermarkText, audioFile) {
+            const formData = new FormData();
+            formData.append('audio_file', audioFile);
+            formData.append('watermark_text', watermarkText);
+            formData.append('method', document.getElementById('embed-method').value);
+            formData.append('segment_length', document.getElementById('embed-segment-length').value);
+            formData.append('seed', document.getElementById('embed-seed').value);
+            formData.append('modulation_strength', document.getElementById('embed-modulation').value);
+            formData.append('band_lower_pct', document.getElementById('embed-band-lower').value);
+            formData.append('band_upper_pct', document.getElementById('embed-band-upper').value);
+            formData.append('n_coeffs', document.getElementById('embed-n-coeffs').value);
+            formData.append('dwt_level', document.getElementById('embed-dwt-level').value);
+            formData.append('dwt_wavelet', document.getElementById('embed-dwt-wavelet').value);
+            formData.append('dwt_coeff_type', document.getElementById('embed-dwt-coeff').value);
+            
+            const response = await fetch(`${SERVER_URL}/api/embed`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (!data.success) {
+                throw new Error(data.error || (currentLanguage === 'en' ? 'Error applying watermark' : 'Erreur lors de l\'insertion du watermark'));
+            }
+            
+            downloadData = data.file_data;
+            downloadFilename = data.filename;
+        }
+        
+        // Processus d'extraction
+        async function processExtraction() {
+            const audioFile = document.getElementById('extract-audio-file').files[0];
+            
+            if (!audioFile) {
+                showStatus(currentLanguage === 'en' ? 'Please select an audio file' : 'Veuillez sélectionner un fichier audio', 'danger', 'extract-status');
+                return;
+            }
+            
+            if (!validateConfig()) return;
+            
+            const button = document.getElementById('extract-btn');
+            const progress = document.getElementById('extract-progress');
+            const result = document.getElementById('extract-result');
+            
+            button.disabled = true;
+            button.innerHTML = `<i class="fa-solid fa-spinner fa-spin btn-icon"></i>${currentLanguage === 'en' ? 'Extracting...' : 'Extraction en cours...'}`;
+            
+            progress.style.display = 'block';
+            result.style.display = 'none';
+            
+            hideStatus('extract-status');
+            
+            try {
+                // Étape 1: Extraire l'ID du watermark
+                showStatus(currentLanguage === 'en' ? 'Analyzing audio file...' : 'Analyse du fichier audio...', 'info', 'extract-status');
+                document.getElementById('extract-progress-text').textContent = currentLanguage === 'en' ? 'Analyzing audio file...' : 'Analyse du fichier audio...';
+                
+                const extractedID = await extractWatermarkFromAudio(audioFile);
+                updateProgress('extract-progress-fill', 50);
+                
+                document.getElementById('extracted-id').textContent = extractedID;
+                
+                // Étape 2: Récupérer le contenu depuis Storj
+                showStatus(currentLanguage === 'en' ? 'Retrieving content from secure storage...' : 'Récupération du contenu depuis le stockage sécurisé...', 'info', 'extract-status');
+                document.getElementById('extract-progress-text').textContent = currentLanguage === 'en' ? 'Retrieving content from secure storage...' : 'Récupération du contenu depuis le stockage sécurisé...';
+                
+                await retrieveContentFromStorj(extractedID);
+                updateProgress('extract-progress-fill', 100);
+                
+                progress.style.display = 'none';
+                result.style.display = 'block';
+                
+                showStatus(currentLanguage === 'en' ? 'Content successfully retrieved' : 'Contenu récupéré avec succès', 'success', 'extract-status');
+            } catch (error) {
+                progress.style.display = 'none';
+                showStatus(`${currentLanguage === 'en' ? 'Error' : 'Erreur'}: ${error.message}`, 'danger', 'extract-status');
+            } finally {
+                button.disabled = false;
+                button.innerHTML = `<i class="fa-solid fa-magnifying-glass btn-icon"></i>${currentLanguage === 'en' ? 'Extract & Retrieve' : 'Extraire et récupérer'}`;
+            }
+        }
+        
+        // Extraction du watermark depuis l'audio
+        async function extractWatermarkFromAudio(audioFile) {
+            const formData = new FormData();
+            formData.append('audio_file', audioFile);
+            formData.append('watermark_length', '12');
+            formData.append('method', document.getElementById('extract-method').value);
+            formData.append('segment_length', document.getElementById('extract-segment-length').value);
+            formData.append('seed', document.getElementById('extract-seed').value);
+            formData.append('modulation_strength', document.getElementById('extract-modulation').value);
+            formData.append('band_lower_pct', document.getElementById('extract-band-lower').value);
+            formData.append('band_upper_pct', document.getElementById('extract-band-upper').value);
+            formData.append('n_coeffs', document.getElementById('extract-n-coeffs').value);
+            formData.append('dwt_level', document.getElementById('extract-dwt-level').value);
+            formData.append('dwt_wavelet', document.getElementById('extract-dwt-wavelet').value);
+            formData.append('dwt_coeff_type', document.getElementById('extract-dwt-coeff').value);
+            
+            const response = await fetch(`${SERVER_URL}/api/extract`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (!data.success) {
+                throw new Error(data.error || (currentLanguage === 'en' ? 'Error extracting watermark' : 'Erreur lors de l\'extraction du watermark'));
+            }
+            
+            return data.extracted_watermark.trim();
+        }
+        
+        // Récupération du contenu depuis Storj
+        async function retrieveContentFromStorj(id) {
+            // Déterminer le type de contenu à partir de l'ID
+            const contentType = getContentTypeFromID(id);
+            
+            const possibleExtensions = {
+                'text': ['txt'],
+                'image': ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'],
+                'audio': ['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a'],
+                'video': ['mp4', 'avi', 'mov', 'mkv', 'wmv', 'webm']
+            };
+            
+            let foundFile = null;
+            let foundExtension = null;
+            
+            // Essayer de trouver le fichier avec les extensions possibles
+            for (const ext of possibleExtensions[contentType] || ['txt']) {
+                try {
+                    const filename = `${id}.${ext}`;
+                    const url = `${storjConfig.endpoint}/${storjConfig.bucketName}/${encodeURIComponent(filename)}`;
+                    
+                    const basicAuth = btoa(`${storjConfig.accessKey}:${storjConfig.secretKey}`);
+                    
+                    let response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Basic ${basicAuth}`
+                        }
+                    });
+                    
+                    if (!response.ok && response.status === 403) {
+                        const urlObj = new URL(url);
+                        const hostHeader = urlObj.host;
+                        
+                        const headers = { 'Host': hostHeader };
+                        const signedHeaders = await createAWS4Signature('GET', url, headers);
+                        
+                        response = await fetch(url, {
+                            method: 'GET',
+                            headers: signedHeaders
+                        });
+                    }
+                    
+                    if (response.ok) {
+                        foundFile = await response.blob();
+                        foundExtension = ext;
+                        break;
+                    }
+                } catch (error) {
+                    continue;
+                }
+            }
+            
+            if (!foundFile) {
+                throw new Error(currentLanguage === 'en' ? 'File not found in storage' : 'Fichier non trouvé dans le stockage');
+            }
+            
+            // Afficher le contenu récupéré
+            await displayRetrievedContent(id, contentType, foundFile, foundExtension);
+        }
+        
+        // Affichage du contenu récupéré
+        async function displayRetrievedContent(id, contentType, file, extension) {
+            const container = document.getElementById('extracted-content');
+            container.innerHTML = '';
+            
+            const fileInfo = document.createElement('div');
+            fileInfo.innerHTML = `
+                <div class="mb-3 flex items-center">
+                    <i class="fa-solid fa-file-circle-check text-success mr-2"></i>
+                    <span class="font-medium">${id}.${extension}</span>
+                    <span class="text-xs text-gray-500 ml-2">(${formatFileSize(file.size)})</span>
+                </div>
+            `;
+            container.appendChild(fileInfo);
+            
+            if (contentType === 'text') {
+                const text = await file.text();
+                const textDiv = document.createElement('div');
+                textDiv.className = 'text-content';
+                textDiv.textContent = text;
+                container.appendChild(textDiv);
+            } else if (contentType === 'image') {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.onload = () => URL.revokeObjectURL(img.src);
+                container.appendChild(img);
+            } else if (contentType === 'video') {
+                const video = document.createElement('video');
+                video.src = URL.createObjectURL(file);
+                video.controls = true;
+                video.onload = () => URL.revokeObjectURL(video.src);
+                container.appendChild(video);
+            } else if (contentType === 'audio') {
+                const audio = document.createElement('audio');
+                audio.src = URL.createObjectURL(file);
+                audio.controls = true;
+                audio.onload = () => URL.revokeObjectURL(audio.src);
+                container.appendChild(audio);
+            }
+            
+            // Bouton de téléchargement
+            const downloadBtn = document.createElement('button');
+            downloadBtn.className = 'btn btn-success mt-4';
+            downloadBtn.innerHTML = `<i class="fa-solid fa-download mr-2"></i>${currentLanguage === 'en' ? 'Download File' : 'Télécharger le fichier'}`;
+            downloadBtn.onclick = () => {
+                const url = URL.createObjectURL(file);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${id}.${extension}`;
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+            container.appendChild(downloadBtn);
+        }
+        
+        // Utilitaires
+        function getContentTypeFromID(id) {
+            const prefix = id.substring(0, 2);
+            const typeMap = {
+                'TX': 'text',
+                'IM': 'image',
+                'AU': 'audio',
+                'VI': 'video'
+            };
+            return typeMap[prefix] || 'text';
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function updateProgress(elementId, percent) {
+            document.getElementById(elementId).style.width = percent + '%';
+        }
+        
+        function showStatus(message, type, elementId) {
+            const statusDiv = document.getElementById(elementId);
+            statusDiv.innerHTML = `
+                <div class="alert alert-${type} flex items-center">
+                    <i class="fa-solid ${getStatusIcon(type)} mr-2"></i>
+                    ${message}
+                </div>
+            `;
+        }
+        
+        function getStatusIcon(type) {
+            switch(type) {
+                case 'success': return 'fa-circle-check';
+                case 'danger': return 'fa-circle-exclamation';
+                case 'warning': return 'fa-triangle-exclamation';
+                case 'info': return 'fa-circle-info';
+                default: return 'fa-info-circle';
+            }
+        }
+        
+        function hideStatus(elementId) {
+            document.getElementById(elementId).innerHTML = '';
+        }
+        
+        function downloadWatermarkedAudio() {
+            if (!downloadData || !downloadFilename) {
+                showStatus(currentLanguage === 'en' ? 'No file available for download' : 'Aucun fichier disponible pour téléchargement', 'danger', 'embed-status');
+                return;
+            }
+            
+            const byteCharacters = atob(downloadData);
+            const byteNumbers = new Array(byteCharacters.length);
+            
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray]);
+            
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = downloadFilename;
+            
+            document.body.appendChild(a);
+            a.click();
+            
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+        
+        // Fonctions cryptographiques pour AWS4
+        async function createAWS4Signature(method, url, headers, payload) {
+            const AWS_ALGORITHM = 'AWS4-HMAC-SHA256';
+            const AWS_SERVICE = 's3';
+            const AWS_REGION = 'us-east-1';
+            
+            const now = new Date();
+            const amzDate = now.toISOString().replace(/[:-]|\.\d{3}/g, '').slice(0, 15) + 'Z';
+            const dateStamp = amzDate.substr(0, 8);
+            
+            let payloadHash;
+            if (payload instanceof Blob || payload instanceof ArrayBuffer) {
+                payloadHash = await sha256ArrayBuffer(await payload.arrayBuffer ? await payload.arrayBuffer() : payload);
+            } else if (typeof payload === 'string') {
+                payloadHash = await sha256(payload);
+            } else if (!payload) {
+                payloadHash = await sha256('');
+            } else {
+                payloadHash = await sha256('');
+            }
+            
+            headers['x-amz-content-sha256'] = payloadHash;
+            headers['x-amz-date'] = amzDate;
+            
+            const canonicalHeaders = Object.keys(headers)
+                .sort()
+                .map(key => `${key.toLowerCase()}:${headers[key]}`)
+                .join('\n') + '\n';
+            
+            const signedHeaders = Object.keys(headers)
+                .sort()
+                .map(key => key.toLowerCase())
+                .join(';');
+            
+            const canonicalRequest = [
+                method,
+                new URL(url).pathname,
+                new URL(url).search.slice(1),
+                canonicalHeaders,
+                signedHeaders,
+                payloadHash
+            ].join('\n');
+            
+            const credentialScope = `${dateStamp}/${AWS_REGION}/${AWS_SERVICE}/aws4_request`;
+            
+            const stringToSign = [
+                AWS_ALGORITHM,
+                amzDate,
+                credentialScope,
+                await sha256(canonicalRequest)
+            ].join('\n');
+            
+            const signingKey = await getSignatureKey(storjConfig.secretKey, dateStamp, AWS_REGION, AWS_SERVICE);
+            const signature = await hmacSha256(stringToSign, signingKey);
+            
+            const authHeader = `${AWS_ALGORITHM} Credential=${storjConfig.accessKey}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+            
+            return {
+                'Authorization': authHeader,
+                ...headers
+            };
+        }
+        
+        async function sha256ArrayBuffer(buffer) {
+            const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        
+        async function sha256(data) {
+            const encoder = new TextEncoder();
+            const buffer = await crypto.subtle.digest('SHA-256', encoder.encode(data));
+            return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        
+        async function hmacSha256(data, key) {
+            const encoder = new TextEncoder();
+            const cryptoKey = await crypto.subtle.importKey(
+                'raw',
+                typeof key === 'string' ? encoder.encode(key) : key,
+                { name: 'HMAC', hash: 'SHA-256' },
+                false,
+                ['sign']
+            );
+            
+            const signature = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(data));
+            return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        
+        async function getSignatureKey(key, dateStamp, regionName, serviceName) {
+            const encoder = new TextEncoder();
+            
+            const kDate = await hmacSha256Raw(dateStamp, encoder.encode('AWS4' + key));
+            const kRegion = await hmacSha256Raw(regionName, kDate);
+            const kService = await hmacSha256Raw(serviceName, kRegion);
+            const kSigning = await hmacSha256Raw('aws4_request', kService);
+            
+            return kSigning;
+        }
+        
+        async function hmacSha256Raw(data, key) {
+            const encoder = new TextEncoder();
+            const cryptoKey = await crypto.subtle.importKey(
+                'raw',
+                key,
+                { name: 'HMAC', hash: 'SHA-256' },
+                false,
+                ['sign']
+            );
+            
+            return await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(data));
+        }
+    </script>
+</body>
+</html>
