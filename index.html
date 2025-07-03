@@ -1336,10 +1336,10 @@
         const SERVER_URL = 'https://watermarking-2.onrender.com/';
         
         let storjConfig = {
-            accessKey: '',
-            secretKey: '',
+            accessKey: 'jw7whq6kufg7i6ohuvtogtlytbta',
+            secretKey: 'j3fmiuqic5n37p7iip6aexw3kfpblfflo7e53jzoi7tzjbslza2xc',
             endpoint: 'https://gateway.storjshare.io',
-            bucketName: ''
+            bucketName: 'watermark'
         };
         
         let downloadData = null;
@@ -1627,10 +1627,10 @@
             const saved = localStorage.getItem('storjConfig');
             if (saved) {
                 storjConfig = JSON.parse(saved);
-                document.getElementById('accessKey').value = storjConfig.accessKey || '';
-                document.getElementById('secretKey').value = storjConfig.secretKey || '';
+                document.getElementById('accessKey').value = storjConfig.accessKey || 'jw7whq6kufg7i6ohuvtogtlytbta';
+                document.getElementById('secretKey').value = storjConfig.secretKey || 'j3fmiuqic5n37p7iip6aexw3kfpblfflo7e53jzoi7tzjbslza2xc';
                 document.getElementById('endpoint').value = storjConfig.endpoint || 'https://gateway.storjshare.io';
-                document.getElementById('bucketName').value = storjConfig.bucketName || '';
+                document.getElementById('bucketName').value = storjConfig.bucketName || 'watermark';
             }
         }
         
