@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -206,6 +206,7 @@
       overflow: hidden;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.7);
+      will-change: transform; /* Performance optimization for mobile */
     }
 
     .tab-indicator {
@@ -218,6 +219,7 @@
       left: 5px;
       width: calc(50% - 10px);
       transition: transform 0.3s ease;
+      will-change: transform; /* Performance optimization for mobile */
     }
 
     .tabs[data-active-tab="extract"] .tab-indicator {
@@ -255,6 +257,7 @@
     .tab-content {
       display: none;
       animation: fadeIn 0.5s ease;
+      will-change: transform, opacity; /* Performance optimization for mobile */
     }
 
     .tab-content.active {
@@ -276,6 +279,7 @@
       transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
+      will-change: transform; /* Performance optimization for mobile */
     }
 
     .dropzone:hover, .dropzone.dragover {
@@ -425,6 +429,7 @@
       position: relative;
       overflow: hidden;
       z-index: 1;
+      will-change: transform; /* Performance optimization for mobile */
     }
 
     .btn::before {
@@ -542,6 +547,7 @@
       width: 0%;
       transition: width 0.5s ease;
       position: relative;
+      will-change: width; /* Performance optimization for mobile */
     }
 
     .progress-fill::before {
@@ -688,6 +694,7 @@
       text-align: center;
       cursor: pointer;
       transition: all 0.3s ease;
+      will-change: transform; /* Performance optimization for mobile */
     }
 
     .type-option:hover {
@@ -720,6 +727,7 @@
 
     .floating-card {
       animation: float 6s ease-in-out infinite;
+      will-change: transform; /* Performance optimization for mobile */
     }
 
     @keyframes float {
@@ -741,7 +749,7 @@
       display: none;
     }
 
-    /* Animations pour les différentes étapes */
+    /* Animations for different stages */
     @keyframes bounceIn {
       0% { transform: scale(0.8); opacity: 0; }
       50% { transform: scale(1.05); opacity: 0.7; }
@@ -750,6 +758,7 @@
 
     .bounce-in {
       animation: bounceIn 0.6s ease;
+      will-change: transform, opacity; /* Performance optimization for mobile */
     }
 
     @keyframes shakeX {
@@ -760,6 +769,7 @@
 
     .shake {
       animation: shakeX 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+      will-change: transform; /* Performance optimization for mobile */
     }
 
     @keyframes zoomPulse {
@@ -769,6 +779,7 @@
 
     .zoom-pulse {
       animation: zoomPulse 2s ease infinite;
+      will-change: transform; /* Performance optimization for mobile */
     }
 
     .emoji {
@@ -778,7 +789,7 @@
       vertical-align: middle;
     }
 
-    /* Styles pour les appareils mobiles */
+    /* Mobile device styles - optimized for performance */
     @media (max-width: 768px) {
       .app-title {
         font-size: 2.3rem;
@@ -790,6 +801,12 @@
 
       .glassy-card {
         padding: 20px;
+        transform: none !important; /* Disable floating animation on mobile */
+        animation: none !important; /* Disable animations on mobile for better performance */
+      }
+
+      .floating-card {
+        animation: none; /* Disable floating animation on mobile */
       }
 
       .param-grid {
@@ -814,9 +831,35 @@
         display: grid;
         grid-template-columns: repeat(2, 1fr);
       }
+
+      /* Reduced visual effects for better mobile performance */
+      .glassy-card::before {
+        display: none;
+      }
+
+      .progress-fill::before {
+        display: none;
+      }
+
+      .btn:hover {
+        transform: none;
+      }
+
+      .type-option:hover {
+        transform: none;
+      }
+
+      .dropzone:hover {
+        transform: none;
+      }
+
+      /* Remove background particles on mobile for better performance */
+      .bg-animation {
+        display: none;
+      }
     }
 
-    /* Animation d'arrière-plan */
+    /* Background animation */
     .bg-animation {
       position: fixed;
       top: 0;
@@ -825,6 +868,7 @@
       height: 100%;
       z-index: -2;
       overflow: hidden;
+      will-change: contents; /* Performance optimization */
     }
 
     .bg-particle {
@@ -835,6 +879,7 @@
       border-radius: 50%;
       opacity: 0.2;
       animation: particleFloat 15s infinite linear;
+      will-change: transform, opacity; /* Performance optimization */
     }
 
     @keyframes particleFloat {
@@ -857,10 +902,10 @@
 </head>
 
 <body>
-  <!-- Arrière-plan animé -->
+  <!-- Animated background -->
   <div class="bg-animation" id="bg-animation"></div>
 
-  <!-- Blobs d'arrière-plan -->
+  <!-- Background blobs -->
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
   <div class="blob blob-3"></div>
@@ -868,20 +913,20 @@
   <div class="app-container">
     <header class="header">
       <h1 class="app-title">WaterMark Magic</h1>
-      <p class="app-subtitle">Protège tes créations, partage sans crainte 🚀</p>
+      <p class="app-subtitle">Secure your creations, share with confidence 🚀</p>
     </header>
 
     <div class="tabs" id="app-tabs" data-active-tab="embed">
       <div class="tab-indicator"></div>
       <button class="tab-btn active" data-tab="embed" onclick="switchTab('embed')">
-        <i class="fas fa-shield-alt"></i>Protéger
+        <i class="fas fa-lock"></i>Embed
       </button>
       <button class="tab-btn" data-tab="extract" onclick="switchTab('extract')">
-        <i class="fas fa-magic"></i>Extraire
+        <i class="fas fa-magic"></i>Extract
       </button>
     </div>
 
-    <!-- Tab Protéger -->
+    <!-- Embed Tab -->
     <div id="embed-tab" class="tab-content active">
       <div class="glassy-card floating-card">
         <div class="card-title">
@@ -892,12 +937,12 @@
         </div>
 
         <div class="form-group">
-          <label for="audio-file" class="form-label">Fichier audio à watermarker</label>
+          <label for="audio-file" class="form-label">Audio file to watermark</label>
           <div class="dropzone" id="audio-drop-area">
             <input type="file" id="audio-file" accept=".wav,.flac,.aiff,.mp3,.ogg,.aac,.m4a,.opus,.wma">
             <i class="fas fa-cloud-upload-alt dropzone-icon"></i>
-            <h3 class="dropzone-title">Glisse ton fichier audio ici</h3>
-            <p class="dropzone-subtitle">ou clique pour choisir un fichier</p>
+            <h3 class="dropzone-title">Drop your audio file here</h3>
+            <p class="dropzone-subtitle">or click to select a file</p>
             <p class="dropzone-subtitle">MP3, WAV, AAC, FLAC...</p>
           </div>
           <div id="audio-file-info" class="hidden"></div>
@@ -907,15 +952,15 @@
       <div class="glassy-card floating-card" style="animation-delay: 0.2s;">
         <div class="card-title">
           <div class="card-icon">
-            <i class="fas fa-shield-alt"></i>
+            <i class="fas fa-lock"></i>
           </div>
-          Contenu à Protéger
+          Content to Embed
         </div>
 
         <div class="content-type-selector" id="content-type-selector">
           <div class="type-option selected" data-type="text" onclick="selectContentType('text')">
             <i class="fas fa-font type-icon"></i>
-            <p class="type-name">Texte</p>
+            <p class="type-name">Text</p>
           </div>
           <div class="type-option" data-type="image" onclick="selectContentType('image')">
             <i class="fas fa-image type-icon"></i>
@@ -927,30 +972,30 @@
           </div>
           <div class="type-option" data-type="video" onclick="selectContentType('video')">
             <i class="fas fa-video type-icon"></i>
-            <p class="type-name">Vidéo</p>
+            <p class="type-name">Video</p>
           </div>
         </div>
 
-        <!-- Zone de saisie de texte -->
+        <!-- Text input area -->
         <div id="text-input" class="form-group">
-          <label for="text-content" class="form-label">Texte à cacher dans l'audio</label>
-          <textarea id="text-content" class="form-control text-area" placeholder="Écris ton message secret ici..."></textarea>
+          <label for="text-content" class="form-label">Text to hide in audio</label>
+          <textarea id="text-content" class="form-control text-area" placeholder="Write your secret message here..."></textarea>
         </div>
 
-        <!-- Input pour fichiers -->
+        <!-- File input -->
         <div id="file-input" class="form-group hidden">
-          <label for="media-file" class="form-label">Fichier à cacher dans l'audio</label>
+          <label for="media-file" class="form-label">File to hide in audio</label>
           <div class="dropzone" id="media-drop-area">
             <input type="file" id="media-file">
             <i class="fas fa-file-import dropzone-icon"></i>
-            <h3 class="dropzone-title">Glisse ton fichier ici</h3>
-            <p class="dropzone-subtitle">ou clique pour choisir un fichier</p>
+            <h3 class="dropzone-title">Drop your file here</h3>
+            <p class="dropzone-subtitle">or click to select a file</p>
             <p class="dropzone-subtitle" id="file-type-hint">Images: JPG, PNG, GIF, WEBP</p>
           </div>
           <div id="media-file-info" class="hidden"></div>
         </div>
 
-        <!-- Prévisualisation du contenu -->
+        <!-- Content preview -->
         <div id="content-preview" class="file-preview hidden"></div>
       </div>
 
@@ -959,73 +1004,73 @@
           <div class="card-icon">
             <i class="fas fa-sliders-h"></i>
           </div>
-          Options & Protection
+          Options & Security
         </div>
 
         <div class="form-group">
-          <label for="embed-method" class="form-label">Méthode de protection</label>
+          <label for="embed-method" class="form-label">Embedding method</label>
           <select id="embed-method" class="form-control form-select">
             <option value="DCT">Standard (DCT)</option>
-            <option value="DWT+DCT" selected>Ultra Sécurisé (DWT+DCT)</option>
+            <option value="DWT+DCT" selected>Ultra Secure (DWT+DCT)</option>
           </select>
         </div>
 
         <button type="button" class="toggle-btn" id="embed-advanced-toggle">
-          Options avancées <i class="fas fa-chevron-down"></i>
+          Advanced options <i class="fas fa-chevron-down"></i>
         </button>
 
         <div id="embed-advanced" class="collapsible-content">
           <div class="param-grid">
             <div class="form-group">
-              <label for="embed-segment-length" class="form-label">Longueur segment</label>
+              <label for="embed-segment-length" class="form-label">Segment length</label>
               <select id="embed-segment-length" class="form-control form-select">
-                <option value="512">512 (Rapide)</option>
+                <option value="512">512 (Fast)</option>
                 <option value="1024">1024</option>
-                <option value="2048" selected>2048 (Recommandé)</option>
+                <option value="2048" selected>2048 (Recommended)</option>
                 <option value="4096">4096</option>
-                <option value="8192">8192 (Précis)</option>
+                <option value="8192">8192 (Precise)</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label for="embed-seed" class="form-label">Clé de sécurité</label>
+              <label for="embed-seed" class="form-label">Security key</label>
               <input type="number" id="embed-seed" class="form-control" value="42">
             </div>
 
             <div class="form-group">
-              <label for="embed-modulation" class="form-label">Force de protection</label>
+              <label for="embed-modulation" class="form-label">Embedding strength</label>
               <input type="number" id="embed-modulation" class="form-control" value="0.015" step="0.001" min="0.001" max="0.5">
             </div>
 
             <div class="form-group">
-              <label for="embed-band-lower" class="form-label">Bande inférieure (%)</label>
+              <label for="embed-band-lower" class="form-label">Lower band (%)</label>
               <input type="number" id="embed-band-lower" class="form-control" value="33" min="0" max="100">
             </div>
 
             <div class="form-group">
-              <label for="embed-band-upper" class="form-label">Bande supérieure (%)</label>
+              <label for="embed-band-upper" class="form-label">Upper band (%)</label>
               <input type="number" id="embed-band-upper" class="form-control" value="66" min="0" max="100">
             </div>
 
             <div class="form-group">
-              <label for="embed-n-coeffs" class="form-label">Nb coefficients</label>
+              <label for="embed-n-coeffs" class="form-label">Num coefficients</label>
               <input type="number" id="embed-n-coeffs" class="form-control" value="5" min="1" max="10">
             </div>
 
             <div class="form-group">
-              <label for="embed-dwt-level" class="form-label">Niveau DWT</label>
+              <label for="embed-dwt-level" class="form-label">DWT level</label>
               <input type="number" id="embed-dwt-level" class="form-control" value="1" min="1" max="5">
             </div>
 
             <div class="form-group">
-              <label for="embed-dwt-wavelet" class="form-label">Type d'ondelette</label>
+              <label for="embed-dwt-wavelet" class="form-label">Wavelet type</label>
               <select id="embed-dwt-wavelet" class="form-control form-select">
                 <option value="haar" selected>haar</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label for="embed-dwt-coeff" class="form-label">Coefficients DWT</label>
+              <label for="embed-dwt-coeff" class="form-label">DWT coefficients</label>
               <select id="embed-dwt-coeff" class="form-control form-select">
                 <option value="cA" selected>cA</option>
                 <option value="cD">cD</option>
@@ -1035,15 +1080,15 @@
         </div>
 <div class="flex justify-center">
         <button class="btn btn-primary" onclick="processEmbedding()" id="embed-btn">
-          <i class="fas fa-shield-alt btn-icon"></i>Protéger Maintenant
+          <i class="fas fa-lock btn-icon"></i>Embed Now
         </button>
 </div>
       </div>
 
-      <!-- Barre de progression -->
+      <!-- Progress bar -->
       <div class="progress-container" id="embed-progress">
         <div class="progress-text">
-          <span id="embed-progress-text">Traitement en cours...</span>
+          <span id="embed-progress-text">Processing...</span>
           <span id="embed-progress-percent">0%</span>
         </div>
         <div class="progress-bar">
@@ -1051,24 +1096,24 @@
         </div>
       </div>
 
-      <!-- Résultat -->
+      <!-- Result -->
       <div class="result-container" id="embed-result">
         <div class="id-display zoom-pulse">
-          <p class="id-title">ID Unique de Protection</p>
+          <p class="id-title">Unique Watermark ID</p>
           <div class="id-value" id="generated-id">XX12AB34CD</div>
         </div>
 
         <div class="alert alert-success">
           <div class="alert-icon"><i class="fas fa-check-circle"></i></div>
           <div class="alert-content">
-            <div class="alert-title">Protection Réussie!</div>
-            <p class="alert-message">Ton fichier audio est maintenant protégé. N'oublie pas de sauvegarder l'ID unique.</p>
+            <div class="alert-title">Embedding Successful!</div>
+            <p class="alert-message">Your audio file has been securely watermarked. Remember to save the unique ID.</p>
           </div>
         </div>
 
         <div class="text-center mt-4">
           <button class="btn btn-success" onclick="downloadWatermarkedAudio()">
-            <i class="fas fa-download btn-icon"></i>Télécharger l'Audio Protégé
+            <i class="fas fa-download btn-icon"></i>Download Watermarked Audio
           </button>
         </div>
       </div>
@@ -1076,92 +1121,92 @@
       <div id="embed-status"></div>
     </div>
 
-    <!-- Tab Extraire -->
+    <!-- Extract Tab -->
     <div id="extract-tab" class="tab-content">
       <div class="glassy-card floating-card">
         <div class="card-title">
           <div class="card-icon">
             <i class="fas fa-magic"></i>
           </div>
-          Extraire le Contenu
+          Extract Content
         </div>
 
         <div class="form-group">
-          <label for="extract-audio-file" class="form-label">Fichier audio contenant un watermark</label>
+          <label for="extract-audio-file" class="form-label">Audio file containing a watermark</label>
           <div class="dropzone" id="extract-audio-drop-area">
             <input type="file" id="extract-audio-file" accept=".wav,.flac,.aiff,.mp3,.ogg,.aac,.m4a,.opus,.wma">
             <i class="fas fa-search dropzone-icon"></i>
-            <h3 class="dropzone-title">Glisse ton fichier audio ici</h3>
-            <p class="dropzone-subtitle">ou clique pour choisir un fichier</p>
+            <h3 class="dropzone-title">Drop your audio file here</h3>
+            <p class="dropzone-subtitle">or click to select a file</p>
             <p class="dropzone-subtitle">MP3, WAV, AAC, FLAC...</p>
           </div>
           <div id="extract-file-info" class="hidden"></div>
         </div>
 
         <div class="form-group">
-          <label for="extract-method" class="form-label">Méthode d'extraction</label>
+          <label for="extract-method" class="form-label">Extraction method</label>
           <select id="extract-method" class="form-control form-select">
             <option value="DCT">Standard (DCT)</option>
-            <option value="DWT+DCT" selected>Ultra Sécurisé (DWT+DCT)</option>
+            <option value="DWT+DCT" selected>Ultra Secure (DWT+DCT)</option>
           </select>
         </div>
 
         <button type="button" class="toggle-btn" id="extract-advanced-toggle">
-          Options avancées <i class="fas fa-chevron-down"></i>
+          Advanced options <i class="fas fa-chevron-down"></i>
         </button>
 
         <div id="extract-advanced" class="collapsible-content">
           <div class="param-grid">
             <div class="form-group">
-              <label for="extract-segment-length" class="form-label">Longueur segment</label>
+              <label for="extract-segment-length" class="form-label">Segment length</label>
               <select id="extract-segment-length" class="form-control form-select">
-                <option value="512">512 (Rapide)</option>
+                <option value="512">512 (Fast)</option>
                 <option value="1024">1024</option>
-                <option value="2048" selected>2048 (Recommandé)</option>
+                <option value="2048" selected>2048 (Recommended)</option>
                 <option value="4096">4096</option>
-                <option value="8192">8192 (Précis)</option>
+                <option value="8192">8192 (Precise)</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label for="extract-seed" class="form-label">Clé de sécurité</label>
+              <label for="extract-seed" class="form-label">Security key</label>
               <input type="number" id="extract-seed" class="form-control" value="42">
             </div>
 
             <div class="form-group">
-              <label for="extract-modulation" class="form-label">Force de protection</label>
+              <label for="extract-modulation" class="form-label">Embedding strength</label>
               <input type="number" id="extract-modulation" class="form-control" value="0.015" step="0.001" min="0.001" max="0.5">
             </div>
 
             <div class="form-group">
-              <label for="extract-band-lower" class="form-label">Bande inférieure (%)</label>
+              <label for="extract-band-lower" class="form-label">Lower band (%)</label>
               <input type="number" id="extract-band-lower" class="form-control" value="33" min="0" max="100">
             </div>
 
             <div class="form-group">
-              <label for="extract-band-upper" class="form-label">Bande supérieure (%)</label>
+              <label for="extract-band-upper" class="form-label">Upper band (%)</label>
               <input type="number" id="extract-band-upper" class="form-control" value="66" min="0" max="100">
             </div>
 
             <div class="form-group">
-              <label for="extract-n-coeffs" class="form-label">Nb coefficients</label>
+              <label for="extract-n-coeffs" class="form-label">Num coefficients</label>
               <input type="number" id="extract-n-coeffs" class="form-control" value="5" min="1" max="10">
             </div>
 
             <div class="form-group">
-              <label for="extract-dwt-level" class="form-label">Niveau DWT</label>
+              <label for="extract-dwt-level" class="form-label">DWT level</label>
               <input type="number" id="extract-dwt-level" class="form-control" value="1" min="1" max="5">
             </div>
 
             <div class="form-group">
-              <label for="extract-dwt-wavelet" class="form-label">Type d'ondelette</label>
+              <label for="extract-dwt-wavelet" class="form-label">Wavelet type</label>
               <select id="extract-dwt-wavelet" class="form-control form-select">
                 <option value="haar" selected>haar</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label for="extract-dwt-coeff" class="form-label">Coefficients DWT</label>
+              <label for="extract-dwt-coeff" class="form-label">DWT coefficients</label>
               <select id="extract-dwt-coeff" class="form-control form-select">
                 <option value="cA" selected>cA</option>
                 <option value="cD">cD</option>
@@ -1171,14 +1216,14 @@
         </div>
    <div class="flex justify-center">
         <button class="btn btn-primary " onclick="processExtraction()" id="extract-btn">
-          <i class="fas fa-magic btn-icon"></i>Extraire le Contenu
+          <i class="fas fa-magic btn-icon"></i>Extract Content
         </button>
       </div>
   </div>
-      <!-- Barre de progression -->
+      <!-- Progress bar -->
       <div class="progress-container" id="extract-progress">
         <div class="progress-text">
-          <span id="extract-progress-text">Extraction en cours...</span>
+          <span id="extract-progress-text">Extracting...</span>
           <span id="extract-progress-percent">0%</span>
         </div>
         <div class="progress-bar">
@@ -1186,18 +1231,18 @@
         </div>
       </div>
 
-      <!-- Résultat de l'extraction -->
+      <!-- Extraction result -->
       <div class="result-container" id="extract-result">
         <div class="id-display">
-          <p class="id-title">ID Unique Extrait</p>
+          <p class="id-title">Extracted Unique ID</p>
           <div class="id-value" id="extracted-id">XX12AB34CD</div>
         </div>
 
         <div class="alert alert-success">
           <div class="alert-icon"><i class="fas fa-check-circle"></i></div>
           <div class="alert-content">
-            <div class="alert-title">Extraction Réussie!</div>
-            <p class="alert-message">Le contenu caché a été extrait avec succès.</p>
+            <div class="alert-title">Extraction Successful!</div>
+            <p class="alert-message">The hidden content has been successfully extracted.</p>
           </div>
         </div>
 
